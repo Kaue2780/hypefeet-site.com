@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hype Feet — Loja Oficial</title>
+<style>
+  :root{--bg:#050506;--card:#0f1113;--muted:#9ca3af;--accent:#f3f4f6;--gold:#f59e0b;font-family:Segoe UI, Roboto, system-ui, -apple-system, Arial}
+  body{margin:0;background:linear-gradient(180deg,#030304,#0b0b0d);color:var(--accent)}
+  .wrap{max-width:1200px;margin:28px auto;padding:18px}
+  header{display:flex;justify-content:space-between;align-items:center}
+  .brand{font-weight:900;font-size:24px}
+  .tag{color:var(--muted);font-size:13px}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:18px}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.15));border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+  .card img{width:100%;height:160px;object-fit:cover;border-radius:8px}
+  .price{color:var(--gold);font-weight:800;margin-top:8px}
+  .name{font-weight:700;margin-top:6px}
+  @media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}}
+  .hero{display:flex;gap:18px;margin-top:18px;align-items:center}
+  .hero img{width:420px;height:320px;object-fit:cover;border-radius:12px}
+  .cta{background:var(--gold);color:#070707;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:pointer;margin-top:12px}
+  footer{margin-top:22px;color:var(--muted);text-align:center;padding-bottom:30px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <div class="brand">Hype Feet</div>
+        <div class="tag">Dark Luxo — Tênis & lifestyle</div>
+      </div>
+      <div class="tag">Frete real • Checkout integrado</div>
+    </header>
+
+    <section class="hero">
+      <div style="flex:1;color:var(--accent)">
+        <h1 style="margin:0">Novidades em tênis — edição limitada</h1>
+        <p style="color:var(--muted);margin-top:8px">Selecione um modelo para ver detalhes, escolher numeração e finalizar a compra.</p>
+        <button class="cta" onclick="openProduct('Nike Court Borough',249.90,'https://images.unsplash.com/photo-1519741496387-2d8b1a9b9b7f?auto=format&fit=crop&w=1200&q=60')">Ver coleção</button>
+      </div>
+      <img src="https://images.unsplash.com/photo-1528701800489-476a7e0a4a4a?auto=format&fit=crop&w=1400&q=60" alt="Hype Feet hero">
+    </section>
+
+    <div class="grid" id="catalog"></div>
+
+    <footer>© Hype Feet — Todos os direitos reservados</footer>
+  </div>
+
+<!-- Product modal / single page product & checkout -->
+<div id="productModal" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);padding:18px;z-index:60">
+  <div style="max-width:980px;width:100%;display:grid;grid-template-columns:1fr 360px;gap:18px;background:linear-gradient(180deg,#0f1113,#0b0b0d);border-radius:12px;padding:18px;color:var(--accent)">
+    <div>
+      <img id="modalImg" src="" style="width:100%;height:420px;object-fit:cover;border-radius:8px">
+      <h2 id="modalName" style="margin-top:12px"></h2>
+      <div id="modalPrice" class="price"></div>
+      <p style="color:var(--muted);margin-top:6px">Escolha numeração, cor e calcule o frete.</p>
+      <div style="margin-top:10px">
+        <label style="display:block;margin-top:8px">Numeração</label>
+        <div id="modalSizes" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <div style="flex:1">
+            <label>Quantidade</label>
+            <input id="modalQty" type="number" value="1" min="1" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--accent)">
+          </div>
+          <div style="width:130px">
+            <label>Cor</label>
+            <select id="modalColor" style="width:100%;padding:8px;border-radius:8px;background:transparent;color:var(--accent)"><option>Preto</option><option>Branco</option><option>Azul</option></select>
+          </div>
+        </div>
+
+        <label style="display:block;margin-top:12px">CEP</label>
+        <div style="display:flex;gap:8px">
+          <input id="modalCep" type="text" placeholder="Ex: 01001000" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--accent)">
+          <button id="modalCalc" style="padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--gold);cursor:pointer">Calcular Frete</button>
+        </div>
+        <div id="modalFrete" style="margin-top:10px;color:var(--muted)"></div>
+      </div>
+    </div>
+
+    <aside style="background:linear-gradient(180deg,#0f1113,#0b0b0d);padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)">
+      <h3 style="margin:0 0 8px 0">Resumo</h3>
+      <div style="color:var(--muted);font-size:13px;margin-bottom:8px">Confira antes de finalizar</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div id="resName">Produto — 1x</div><div id="resPrice">R$ 0,00</div></div>
+      <div style="display:flex;justify-content:space-between;margin:6px 0"><div class="tag" style="color:var(--muted)">Subtotal</div><div id="resSubtotal">R$ 0,00</div></div>
+      <div style="display:flex;justify-content:space-between;margin:6px 0"><div class="tag" style="color:var(--muted)">Frete</div><div id="resFrete">—</div></div>
+      <hr style="border:none;border-top:1px solid rgba(255,255,255,0.04);margin:12px 0">
+      <div style="display:flex;justify-content:space-between;font-weight:800"><div>Total</div><div id="resTotal">R$ 0,00</div></div>
+
+      <label style="margin-top:12px">Pagamento</label>
+      <select id="resPayment" style="width:100%;padding:8px;border-radius:8px;background:transparent;color:var(--accent)"><option value="pix">Pix</option><option value="card">Cartão</option><option value="boleto">Boleto</option></select>
+      <button id="resFinalize" class="cta" style="margin-top:12px;background:var(--gold);color:#070707;padding:12px;border-radius:10px;border:0;cursor:pointer">Finalizar pedido</button>
+      <div style="margin-top:8px;color:var(--muted);font-size:13px">Após pagamento, o servidor pode gerar a etiqueta automaticamente (MelhorEnvio).</div>
+      <button onclick="closeModal()" style="margin-top:8px;width:100%;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)">Fechar</button>
+    </aside>
+  </div>
+</div>
+
+<script>
+const catalog = [
+  {name:'Nike Court Borough', price:249.90, img:'https://images.unsplash.com/photo-1519741496387-2d8b1a9b9b7f?auto=format&fit=crop&w=900&q=60'},
+  {name:'Air Force', price:399.90, img:'https://images.unsplash.com/photo-1528701800489-476a7e0a4a4a?auto=format&fit=crop&w=900&q=60'},
+  {name:'Dunk', price:329.90, img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=60'},
+  {name:'Jordan Low', price:479.90, img:'https://images.unsplash.com/photo-1600180758890-3c2c1a6e6a6a?auto=format&fit=crop&w=900&q=60'}
+];
+
+const catalogEl = document.getElementById('catalog');
+catalog.forEach(p => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `<img src="${p.img}" alt="${p.name}"><div class="name">${p.name}</div><div class="price">R$ ${p.price.toFixed(2).replace('.',',')}</div>`;
+  card.onclick = () => openProduct(p.name,p.price,p.img);
+  catalogEl.appendChild(card);
+});
+
+// Modal logic
+const modal = document.getElementById('productModal');
+const modalImg = document.getElementById('modalImg');
+const modalName = document.getElementById('modalName');
+const modalPrice = document.getElementById('modalPrice');
+const modalSizes = document.getElementById('modalSizes');
+const modalQty = document.getElementById('modalQty');
+const modalCep = document.getElementById('modalCep');
+const modalCalc = document.getElementById('modalCalc');
+const modalFrete = document.getElementById('modalFrete');
+const resName = document.getElementById('resName');
+const resPrice = document.getElementById('resPrice');
+const resSubtotal = document.getElementById('resSubtotal');
+const resFrete = document.getElementById('resFrete');
+const resTotal = document.getElementById('resTotal');
+const resFinalize = document.getElementById('resFinalize');
+const modalColor = document.getElementById('modalColor');
+const modalVariation = document.getElementById('variation') || {value:'Couro'};
+
+let current = null;
+let selectedSize = null;
+let currentFrete = null;
+
+function openProduct(name, price, img){
+  current = {name, price, img};
+  modalImg.src = img;
+  modalName.textContent = name;
+  modalPrice.textContent = 'R$ ' + price.toFixed(2).replace('.',',');
+  selectedSize = null;
+  currentFrete = null;
+  modalFrete.textContent='';
+  resFrete.textContent='—';
+  resSubtotal.textContent = 'R$ ' + price.toFixed(2).replace('.',',');
+  resPrice.textContent = 'R$ ' + price.toFixed(2).replace('.',',');
+  resName.textContent = name + ' — 1x';
+  // populate sizes
+  modalSizes.innerHTML='';
+  for(let s=34;s<=42;s++){
+    const b = document.createElement('button');
+    b.textContent = s;
+    b.className = 'size-btn';
+    b.style.padding='8px 10px'; b.style.margin='4px'; b.style.borderRadius='8px'; b.style.border='1px solid rgba(255,255,255,0.04)'; b.style.background='transparent'; b.style.color='var(--accent)';
+    b.onclick = ()=>{ document.querySelectorAll('#modalSizes .size-btn').forEach(x=>x.style.background='transparent'); b.style.background='rgba(245,158,11,0.12)'; selectedSize=s; updateSummary(); };
+    modalSizes.appendChild(b);
+  }
+  modal.style.display='flex';
+}
+
+function closeModal(){ modal.style.display='none'; }
+
+function money(v){ return 'R$ ' + Number(v).toFixed(2).replace('.',','); }
+
+function updateSummary(){
+  const qty = Number(modalQty.value) || 1;
+  const sub = current.price * qty;
+  resSubtotal.textContent = money(sub);
+  resPrice.textContent = money(current.price);
+  resName.textContent = `${current.name} — ${qty}x`;
+  resFrete.textContent = currentFrete !== null ? money(currentFrete) : '—';
+  resTotal.textContent = money(sub + (currentFrete||0));
+}
+
+// Call backend /api/frete to get real quotes via MelhorEnvio
+modalCalc.onclick = async ()=>{
+  const cep = modalCep.value.replace(/\D/g,'');
+  if(cep.length !== 8){ modalFrete.textContent='Digite um CEP válido (8 dígitos)'; return; }
+  if(!selectedSize){ modalFrete.textContent='Selecione a numeração antes de calcular o frete'; return; }
+  modalFrete.textContent = 'Calculando...';
+  try{
+    const resp = await fetch('/api/frete', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        cep_destino: cep,
+        // dimensions and weight for MelhorEnvio
+        items: [{ weight_kg: 1.0, length_cm: 30, height_cm: 12, width_cm: 20 }]
+      })
+    });
+    const data = await resp.json();
+    if(!resp.ok){ modalFrete.textContent = data.message || 'Erro ao calcular frete'; return; }
+    // display options
+    modalFrete.innerHTML = data.options.map(o=>`<div><strong>${o.provider}</strong> — ${o.service} • ${o.estimate} • ${money(o.price)}</div>`).join('');
+    // choose cheapest option
+    if(data.options && data.options.length>0){
+      currentFrete = data.options[0].price;
+      updateSummary();
+    }
+  }catch(err){
+    console.error(err);
+    modalFrete.textContent = 'Erro de comunicação com o servidor.';
+  }
+};
+
+resFinalize.onclick = ()=>{
+  if(!selectedSize){ alert('Selecione a numeração antes de finalizar.'); return; }
+  if(!currentFrete){ alert('Calcule o frete antes de finalizar.'); return; }
+  alert('Pedido criado (protótipo). Para pagamento real, integre Mercado Pago no backend e configure webhooks.');
+};
+
+</script>
+</body>
+</html>
